@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+<!-- we can get everything we want to show in this page from base.html-->
+{% block title %}Show CSV{% endblock %}
+<!-- We ares sendig this to the base Html-->
+
+{% block content %}
+<!-- We ares sendig this to the base Html-->
+
+<div class="container-login100">
+    <div class="wrap-login100 p-t-50 p-b-90">
+      <span class="login100-form-title p-b-51"> Showing Table </span>
+      <div>
+        <a href="{{ url_for('views.home')}}" class="txt1"> Back </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="width: 98% align-item:center;">
+  <table border='1' style="width: 100%">
+    <thead >
+      <tr  style="text-align: center; border:1px solid black;">
+        <th ></th>
+        <th>Tagname</th>
+        <th>ReactorId</th>
+        <th>tagType</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for query in queries %} 
+      <tr style="text-align: center; border:1px solid black;">    
+        <th ></th>
+        <td>{{query.Tagname}}</td>
+        <td>{{query.ReactorId}}</td>
+        <td>{{query.tagType}}</td>
+      </tr>
+      {% endfor %}
+      
+    </tbody>
+</table>
+</div>
+
+{% endblock %}
