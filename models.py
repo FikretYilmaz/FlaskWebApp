@@ -1,4 +1,4 @@
-from . import db #* Import from the same directory "__init__.py"
+from app import db #* Import from the same directory "__init__.py"
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 
