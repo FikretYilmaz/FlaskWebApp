@@ -44,14 +44,14 @@ app.config['SECRET_KEY'] = my_secret_key
 db.init_app(app)
 migrate = Migrate(app, db)
 
-from views import views
-from auth import auth
+from views.views import views
+from auth.auth import auth
 
 app.register_blueprint(views, url_prefix="/") #* We are registering our blueprint to our flask app
 app.register_blueprint(auth, url_prefix="/")
 
 #* Before we create DB we call all of models
-from models import User  
+from models.models import User  
 
 #* Check the user is login or not if not redirect user to the page we want
 login_manager = LoginManager()

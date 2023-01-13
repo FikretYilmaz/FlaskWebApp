@@ -1,4 +1,4 @@
-from models import User
+from models.models import User
 from werkzeug.security import generate_password_hash
 
 def test_new_user():
