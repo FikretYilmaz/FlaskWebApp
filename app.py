@@ -1,6 +1,6 @@
 from dotenv import load_dotenv,find_dotenv
 import os
-from flask import Flask
+from flask import Flask,render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
@@ -21,7 +21,7 @@ DB_NAME=os.getenv('DB_NAME')
 # DB_PORT=os.getenv('DB_PORT')
 DRIVER= os.getenv('DRIVER')
 
-# POSTGRES=os.getenv('POSTGRES')
+POSTGRES=os.getenv('POSTGRES')
 
 params = urllib.parse.quote_plus(
     'Driver=%s;' % DRIVER +
@@ -35,11 +35,11 @@ params = urllib.parse.quote_plus(
 
 conn_str = 'mssql+pyodbc:///?odbc_connect=' + params
 
-#*Initialize DB
-# app.config['SQLALCHEMY_DATABASE_URI']=f'mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?driver=ODBC+Driver+17+for+SQL+Server'
-app.config['SQLALCHEMY_DATABASE_URI']=conn_str
+#*Initialize DB From Azure SQL
+# app.config['SQLALCHEMY_DATABASE_URI']=conn_str
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES
+#*Initialize DB From Local Postgres SQL
+app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES
 app.config['SECRET_KEY'] = my_secret_key
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -62,5 +62,20 @@ login_manager.init_app(app)
 def load_user(id):
     return User.query.get(int(id))
 
+@app.errorhandler(401)
+def page_not_found(e):
+    return render_template("401.html",user=''), 401
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html",user=''), 404
+
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template("500.html",user=''), 500
+
+    
 if __name__ =='__main__':
     app.run()

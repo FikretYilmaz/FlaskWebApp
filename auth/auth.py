@@ -73,22 +73,29 @@ def logout():
 @auth.route('/upload',methods=['GET', 'POST'])
 @login_required
 def upload():
+    ALLOWED_EXTENSION = set(['csv'])
     form=None
     class UploadFileForm(FlaskForm):
         files = MultipleFileField('File',validators=[InputRequired()])
         submit = SubmitField('Upload File')
-    form = UploadFileForm()       
+    form = UploadFileForm() 
+    def allowed_file(fileName):
+        return '.' in fileName and fileName.rsplit('.', 1)[1] in ALLOWED_EXTENSION   #Check the file extension
     if form.validate_on_submit():
         for file in form.files.data:
-            df_local_af_mapping = pd.read_csv(file)  
-            df=pd.DataFrame()
-            for index, row in df_local_af_mapping.iterrows():
-                TagName=[row['id'],row['combined_feed_H2'],row['combined_feed_CO']]
-                tagType=['id','combined_feed_H2','combined_feed_CO']
-                df2=pd.DataFrame({'Tagname':TagName, 'ReactorId':row['Reactor'],'tagType':tagType})
-                df=pd.concat([df,df2],ignore_index=True)
-            df.to_sql(con=db.engine,name='reactor',index=False,if_exists='append')
-        flash('CSV fil successfully added',category='success')
+            filename = secure_filename(file.filename)
+            if allowed_file(file):
+                df_local_af_mapping = pd.read_csv(file)
+                df=pd.DataFrame()
+                for index, row in df_local_af_mapping.iterrows():
+                    TagName=[row['id'],row['combined_feed_H2'],row['combined_feed_CO']]
+                    tagType=['id','combined_feed_H2','combined_feed_CO']
+                    df2=pd.DataFrame({'Tagname':TagName, 'ReactorId':row['Reactor'],'tagType':tagType})
+                    df=pd.concat([df,df2],ignore_index=True)
+                df.to_sql(con=db.engine,name='reactor',index=False,if_exists='append')
+                flash('CSV fil successfully added',category='success')
+            else:
+                flash(f'Not Supported File extension for {filename}. Only allowed to upload the CSV files',category='error')
         return render_template('upload.html',form=form,user=current_user)
     else:
         return render_template('upload.html',form=form,user=current_user)
@@ -98,3 +105,5 @@ def upload():
 def show():
     query2 =db.session.query(Reactor.ReactorId,Reactor.Tagname,Reactor.tagType).all()    
     return render_template('show_csv.html',queries=query2,user=current_user)
+
+    
