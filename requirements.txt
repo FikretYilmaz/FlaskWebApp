@@ -31,3 +31,5 @@ Werkzeug==2.2.2
 WTForms==3.0.1
 zipp==3.11.0
 python-dotenv==0.21.0
+uuid==1.30
+PyJWT==2.6.0
