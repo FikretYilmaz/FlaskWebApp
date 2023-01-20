@@ -7,51 +7,13 @@ from models.models import User,Reactor
 from flask_login import login_user,logout_user,login_required,current_user
 from werkzeug.security import generate_password_hash,check_password_hash
 from werkzeug.utils import secure_filename
-import os
 import pandas as pd
 from wtforms import MultipleFileField,SubmitField
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired
-import jwt
-from functools import wraps
-import datetime
 import uuid
 
 auth = Blueprint('auth',__name__) #* Help us to Store different routes together
-
-# def token_encode(public_id):
-#     token = jwt.encode({'public_id': public_id, 'exp': datetime.datetime.utcnow(
-#     ) + datetime.timedelta(minutes=300)}, app.config['SECRET_KEY'], 'HS256')
-#     session['token'] = token
-#     print(token)
-#     return token
-
-
-# def token_required(f):
-#     @wraps(f)
-#     def decorated(*args, **kwargs):
-#         token = None
-#         if 'token' in session:
-#             token = session.get('token')
-#         elif 'token=' in str(request.url):
-#             token_string = str(request.url)
-#             loc = token_string.split('token=')
-#             token = loc[1]
-#             print(token)
-#         if not token:
-#             return redirect(url_for('auth.login'))
-#         try:
-#             data = jwt.decode(
-#                 token, app.config['SECRET_KEY'], algorithms=["HS256"])
-#             current_user = User.query.filter_by(
-#                 public_id=data['public_id']).first()
-#         except:
-#             return render_template('500.html'), 500
-#         print(token)
-#         return f(current_user, *args, **kwargs)
-#     return decorated
-
-
 
 @auth.route('/login',methods=['POST','GET'])
 def login():
@@ -61,8 +23,6 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password,password):
-                # token = jwt.encode({'public_id': user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=300)}, app.config['SECRET_KEY'], 'HS256')
-                # session['token'] = token
                 flash('Logged in!',category='success')
                 login_user(user,remember=True)
                 return redirect(url_for('views.home'))
@@ -74,7 +34,6 @@ def login():
 
 
 @auth.route('/sign-up',methods=['POST','GET'])
-# @token_required
 def sign_up():
     if request.method == 'POST':        
         email=request.form.get('email') #*Using get method help us with returning "null" if the data is not exist
@@ -106,7 +65,6 @@ def sign_up():
 
 
 @auth.route('/logout')
-# @token_required
 @login_required #* You can only access this route you if you are login
 def logout():
     logout_user()
@@ -114,7 +72,6 @@ def logout():
 
 
 @auth.route('/upload',methods=['GET', 'POST'])
-# @token_required
 @login_required
 def upload():
     ALLOWED_EXTENSION = set(['csv'])
@@ -145,7 +102,6 @@ def upload():
         return render_template('upload.html',form=form,user=current_user)
     
 @auth.route('/show',methods=['GET', 'POST'])
-# @token_required
 @login_required
 def show():
     query2 =db.session.query(Reactor.ReactorId,Reactor.Tagname,Reactor.tagType).all()    
