@@ -1,0 +1,15 @@
+SECRET_KEY='helloworld'
+# DB_USER='serveradmin'
+# DB_PASSWORD='yourpassword'
+# DB_SERVER='azuredbserver'
+# DB_PORT='1433'
+# DB_NAME='yourdbname'
+# DRIVER= '{ODBC Driver 17 for SQL Server}'
+
+#!Local Connection to mssql
+# SERVER='servername'
+# DB_NAME='dbname'
+# DRIVER='ODBC Driver 17 for SQL Server'
+
+#! Localhost PostgresDB
+# POSTGRES='postgresql://postgres:<yourdbpassword>@localhost:5432/<yourdbname>'
